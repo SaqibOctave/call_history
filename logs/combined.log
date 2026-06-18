@@ -1,0 +1,72 @@
+[2026-06-18 11:30:19] [32minfo[39m: PostgreSQL connected
+[2026-06-18 11:30:20] [32minfo[39m: Server running on port 8790
+[2026-06-18 11:41:31] [32minfo[39m: PostgreSQL connected
+[2026-06-18 11:41:33] [32minfo[39m: Migrations applied successfully
+[2026-06-18 11:41:33] [32minfo[39m: Server running on port 8790
+[2026-06-18 11:57:51] [32minfo[39m: PostgreSQL connected
+[2026-06-18 11:57:53] [32minfo[39m: Migrations applied successfully
+[2026-06-18 11:57:53] [32minfo[39m: Server running on port 8790
+[2026-06-18 12:22:31] [32minfo[39m: POST /api/call
+[2026-06-18 12:22:31] [31merror[39m: createCall: Cannot destructure property 'agent_name' of 'data' as it is undefined.
+[2026-06-18 12:23:17] [32minfo[39m: PostgreSQL connected
+[2026-06-18 12:23:19] [32minfo[39m: PostgreSQL connected
+[2026-06-18 12:23:20] [32minfo[39m: Migrations applied successfully
+[2026-06-18 12:23:20] [32minfo[39m: Server running on port 8790
+[2026-06-18 12:27:22] [32minfo[39m: POST /api/call
+[2026-06-18 12:27:22] [31merror[39m: createCall: Cannot destructure property 'agent_name' of 'data' as it is undefined.
+[2026-06-18 12:27:42] [32minfo[39m: PostgreSQL connected
+[2026-06-18 12:27:44] [32minfo[39m: PostgreSQL connected
+[2026-06-18 12:27:46] [32minfo[39m: PostgreSQL connected
+[2026-06-18 12:27:47] [32minfo[39m: Migrations applied successfully
+[2026-06-18 12:27:47] [32minfo[39m: Server running on port 8790
+[2026-06-18 12:27:49] [32minfo[39m: PostgreSQL connected
+[2026-06-18 12:27:50] [32minfo[39m: Migrations applied successfully
+[2026-06-18 12:27:50] [32minfo[39m: Server running on port 8790
+[2026-06-18 12:27:54] [32minfo[39m: PostgreSQL connected
+[2026-06-18 12:27:55] [32minfo[39m: PostgreSQL connected
+[2026-06-18 12:27:57] [32minfo[39m: Migrations applied successfully
+[2026-06-18 12:27:57] [32minfo[39m: Server running on port 8790
+[2026-06-18 12:28:02] [32minfo[39m: POST /api/call
+[2026-06-18 12:28:02] [31merror[39m: createCall: Cannot destructure property 'agent_name' of 'req.body' as it is undefined.
+[2026-06-18 12:40:32] [32minfo[39m: PostgreSQL connected
+[2026-06-18 12:40:34] [32minfo[39m: Migrations applied successfully
+[2026-06-18 12:40:34] [32minfo[39m: Server running on port 8790
+[2026-06-18 12:41:42] [32minfo[39m: POST /api/call
+[2026-06-18 12:41:43] [32minfo[39m: PostgreSQL connected
+[2026-06-18 12:42:21] [32minfo[39m: GET /api/call
+[2026-06-18 12:42:21] [32minfo[39m: PostgreSQL connected
+[2026-06-18 12:49:38] [32minfo[39m: POST /api/call
+[2026-06-18 12:49:39] [32minfo[39m: PostgreSQL connected
+[2026-06-18 12:50:03] [32minfo[39m: POST /api/call
+[2026-06-18 12:50:04] [32minfo[39m: PostgreSQL connected
+[2026-06-18 12:52:52] [32minfo[39m: GET /api/call
+[2026-06-18 12:52:53] [32minfo[39m: PostgreSQL connected
+[2026-06-18 12:55:48] [32minfo[39m: PostgreSQL connected
+[2026-06-18 12:55:49] [32minfo[39m: Migrations applied successfully
+[2026-06-18 12:55:49] [32minfo[39m: Server running on port 8790
+[2026-06-18 12:56:04] [32minfo[39m: PostgreSQL connected
+[2026-06-18 12:56:06] [32minfo[39m: Migrations applied successfully
+[2026-06-18 12:56:06] [32minfo[39m: Server running on port 8790
+[2026-06-18 12:56:12] [32minfo[39m: PostgreSQL connected
+[2026-06-18 12:56:14] [32minfo[39m: Migrations applied successfully
+[2026-06-18 12:56:14] [32minfo[39m: Server running on port 8790
+[2026-06-18 12:57:25] [32minfo[39m: GET /api/call
+[2026-06-18 12:57:26] [32minfo[39m: PostgreSQL connected
+[2026-06-18 12:57:26] [32minfo[39m: PostgreSQL connected
+[2026-06-18 13:05:03] [32minfo[39m: POST /api/call
+[2026-06-18 13:05:04] [32minfo[39m: PostgreSQL connected
+[2026-06-18 13:05:06] [32minfo[39m: POST /api/call
+[2026-06-18 13:05:07] [32minfo[39m: POST /api/call
+[2026-06-18 13:05:09] [32minfo[39m: POST /api/call
+[2026-06-18 13:05:10] [32minfo[39m: POST /api/call
+[2026-06-18 13:05:11] [32minfo[39m: POST /api/call
+[2026-06-18 13:05:12] [32minfo[39m: POST /api/call
+[2026-06-18 13:05:13] [32minfo[39m: POST /api/call
+[2026-06-18 13:05:15] [32minfo[39m: POST /api/call
+[2026-06-18 13:05:50] [32minfo[39m: GET /api/call?limit=5&offset=0
+[2026-06-18 13:05:50] [32minfo[39m: PostgreSQL connected
+[2026-06-18 13:05:50] [32minfo[39m: PostgreSQL connected
+[2026-06-18 13:06:00] [32minfo[39m: GET /api/call?limit=5&offset=2
+[2026-06-18 13:06:14] [32minfo[39m: GET /api/call?limit=5&offset=3
+[2026-06-18 13:06:14] [32minfo[39m: PostgreSQL connected
+[2026-06-18 13:06:14] [32minfo[39m: PostgreSQL connected
