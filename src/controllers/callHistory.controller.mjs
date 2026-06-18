@@ -30,3 +30,13 @@ export async function getCallById(req, res) {
     res.status(err.status ?? 500).json({ error: err.message });
   }
 }
+
+export async function deleteCall(req, res) {
+  try {
+    const deleted = await service.deleteCall(req.params.id);
+    res.json({ message: 'Call deleted successfully', data: deleted });
+  } catch (err) {
+    logger.error(`deleteCall: ${err.message}`);
+    res.status(err.status ?? 500).json({ error: err.message });
+  }
+}

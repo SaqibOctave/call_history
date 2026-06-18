@@ -77,3 +77,16 @@ export async function getCallById(id) {
   }
   return call;
 }
+
+export async function deleteCall(id) {
+  const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!UUID_REGEX.test(id)) {
+    throw Object.assign(new Error('Invalid call ID format'), { status: 400 });
+  }
+
+  const deleted = await repo.deleteCallById(id);
+  if (!deleted) {
+    throw Object.assign(new Error('Call not found'), { status: 404 });
+  }
+  return deleted;
+}

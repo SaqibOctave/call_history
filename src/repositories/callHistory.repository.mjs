@@ -51,3 +51,11 @@ export async function findCallById(call_id) {
   );
   return rows[0] ?? null;
 }
+
+export async function deleteCallById(call_id) {
+  const { rows } = await pool.query(
+    `DELETE FROM "Call_History" WHERE call_id = $1 RETURNING *`,
+    [call_id]
+  );
+  return rows[0] ?? null;
+}

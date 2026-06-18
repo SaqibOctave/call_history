@@ -1,3 +1,5 @@
 [2026-06-18 12:22:31] [31merror[39m: createCall: Cannot destructure property 'agent_name' of 'data' as it is undefined.
 [2026-06-18 12:27:22] [31merror[39m: createCall: Cannot destructure property 'agent_name' of 'data' as it is undefined.
 [2026-06-18 12:28:02] [31merror[39m: createCall: Cannot destructure property 'agent_name' of 'req.body' as it is undefined.
+[2026-06-18 14:36:51] [31merror[39m: getAllCalls: result must be one of: completed, onCall, failed
+[2026-06-18 14:37:10] [31merror[39m: getAllCalls: result must be one of: completed, onCall, failed
