@@ -29,12 +29,14 @@ export async function createCall(data) {
 export async function getAllCalls(query) {
   const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-  const limit  = Math.min(parseInt(query.limit  ?? 25, 10), 100);
-  const offset = Math.max(parseInt(query.offset ?? 0,  10), 0);
+  const limit = Math.min(parseInt(query.limit ?? 25, 10), 100);
+  const page  = Math.max(parseInt(query.page  ?? 1,  10), 1);
 
-  if (isNaN(limit) || isNaN(offset)) {
-    throw Object.assign(new Error('limit and offset must be numbers'), { status: 400 });
+  if (isNaN(limit) || isNaN(page)) {
+    throw Object.assign(new Error('limit and page must be numbers'), { status: 400 });
   }
+
+  const offset = (page - 1) * limit;
 
   const call_id    = query.call_id    ?? null;
   const result     = query.result     ?? null;
@@ -54,7 +56,12 @@ export async function getAllCalls(query) {
 
   return {
     data,
-    pagination: { total, limit, offset },
+    pagination: {
+      total,
+      limit,
+      page,
+      totalPages: Math.ceil(total / limit),
+    },
   };
 }
 

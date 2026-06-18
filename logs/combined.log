@@ -70,3 +70,24 @@
 [2026-06-18 13:06:14] [32minfo[39m: GET /api/call?limit=5&offset=3
 [2026-06-18 13:06:14] [32minfo[39m: PostgreSQL connected
 [2026-06-18 13:06:14] [32minfo[39m: PostgreSQL connected
+[2026-06-18 13:17:52] [32minfo[39m: PostgreSQL connected
+[2026-06-18 13:17:53] [32minfo[39m: Migrations applied successfully
+[2026-06-18 13:17:53] [32minfo[39m: Server running on port 8790
+[2026-06-18 13:17:57] [32minfo[39m: GET /api/call?limit=5&offset=0
+[2026-06-18 13:17:58] [32minfo[39m: PostgreSQL connected
+[2026-06-18 13:18:20] [32minfo[39m: GET /api/call?limit=5&offset=5
+[2026-06-18 13:18:20] [32minfo[39m: PostgreSQL connected
+[2026-06-18 13:18:20] [32minfo[39m: PostgreSQL connected
+[2026-06-18 13:18:28] [32minfo[39m: GET /api/call?limit=5&offset=10
+[2026-06-18 13:19:15] [32minfo[39m: PostgreSQL connected
+[2026-06-18 13:19:16] [32minfo[39m: Migrations applied successfully
+[2026-06-18 13:19:16] [32minfo[39m: Server running on port 8790
+[2026-06-18 13:19:54] [32minfo[39m: GET /api/call?limit=5&page=1
+[2026-06-18 13:19:54] [32minfo[39m: PostgreSQL connected
+[2026-06-18 13:19:54] [32minfo[39m: PostgreSQL connected
+[2026-06-18 13:34:18] [32minfo[39m: GET /api/call?limit=5&page=1&result=failed
+[2026-06-18 13:34:18] [32minfo[39m: PostgreSQL connected
+[2026-06-18 13:34:18] [32minfo[39m: PostgreSQL connected
+[2026-06-18 13:34:57] [32minfo[39m: GET /api/call?limit=5&page=1&result=failed&agent_name=john
+[2026-06-18 13:34:58] [32minfo[39m: PostgreSQL connected
+[2026-06-18 13:34:58] [32minfo[39m: PostgreSQL connected
