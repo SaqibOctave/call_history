@@ -1,42 +1,43 @@
 import * as service from '../services/callHistory.service.mjs';
+import { sendSuccess, sendCreated, sendError } from '../utils/response.mjs';
 import logger from '../config/logger.mjs';
 
 export async function createCall(req, res) {
   try {
     const call = await service.createCall(req.body);
-    res.status(201).json(call);
+    sendCreated(res, call);
   } catch (err) {
     logger.error(`createCall: ${err.message}`);
-    res.status(err.status ?? 400).json({ error: err.message });
+    sendError(res, err);
   }
 }
 
 export async function getAllCalls(req, res) {
   try {
     const result = await service.getAllCalls(req.query);
-    res.json(result);
+    sendSuccess(res, result);
   } catch (err) {
     logger.error(`getAllCalls: ${err.message}`);
-    res.status(err.status ?? 500).json({ error: err.message });
+    sendError(res, err);
   }
 }
 
 export async function getCallById(req, res) {
   try {
     const call = await service.getCallById(req.params.id);
-    res.json(call);
+    sendSuccess(res, call);
   } catch (err) {
     logger.error(`getCallById: ${err.message}`);
-    res.status(err.status ?? 500).json({ error: err.message });
+    sendError(res, err);
   }
 }
 
 export async function deleteCall(req, res) {
   try {
     const deleted = await service.deleteCall(req.params.id);
-    res.json({ message: 'Call deleted successfully', data: deleted });
+    sendSuccess(res, { message: 'Call deleted successfully', data: deleted });
   } catch (err) {
     logger.error(`deleteCall: ${err.message}`);
-    res.status(err.status ?? 500).json({ error: err.message });
+    sendError(res, err);
   }
 }

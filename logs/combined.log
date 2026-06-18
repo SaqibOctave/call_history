@@ -264,3 +264,46 @@
 [2026-06-18 15:03:16] [32minfo[39m: GET /api/call?page=1&limit=1&result=onCall
 [2026-06-18 15:03:17] [32minfo[39m: PostgreSQL connected
 [2026-06-18 15:03:17] [32minfo[39m: PostgreSQL connected
+[2026-06-18 15:04:16] [32minfo[39m: GET /api/call?page=1&limit=1&result=onCall
+[2026-06-18 15:04:17] [32minfo[39m: PostgreSQL connected
+[2026-06-18 15:04:17] [32minfo[39m: PostgreSQL connected
+[2026-06-18 15:05:16] [32minfo[39m: GET /api/call?page=1&limit=1&result=onCall
+[2026-06-18 15:05:17] [32minfo[39m: PostgreSQL connected
+[2026-06-18 15:05:17] [32minfo[39m: PostgreSQL connected
+[2026-06-18 15:06:16] [32minfo[39m: GET /api/call?page=1&limit=1&result=onCall
+[2026-06-18 15:06:17] [32minfo[39m: PostgreSQL connected
+[2026-06-18 15:06:17] [32minfo[39m: PostgreSQL connected
+[2026-06-18 15:07:16] [32minfo[39m: GET /api/call?page=1&limit=1&result=onCall
+[2026-06-18 15:07:17] [32minfo[39m: PostgreSQL connected
+[2026-06-18 15:07:17] [32minfo[39m: PostgreSQL connected
+[2026-06-18 15:08:16] [32minfo[39m: GET /api/call?page=1&limit=1&result=onCall
+[2026-06-18 15:08:17] [32minfo[39m: PostgreSQL connected
+[2026-06-18 15:08:17] [32minfo[39m: PostgreSQL connected
+[2026-06-18 15:09:16] [32minfo[39m: GET /api/call?page=1&limit=1&result=onCall
+[2026-06-18 15:09:18] [32minfo[39m: PostgreSQL connected
+[2026-06-18 15:09:18] [32minfo[39m: PostgreSQL connected
+[2026-06-18 15:10:16] [32minfo[39m: GET /api/call?page=1&limit=1&result=onCall
+[2026-06-18 15:10:17] [32minfo[39m: PostgreSQL connected
+[2026-06-18 15:10:17] [32minfo[39m: PostgreSQL connected
+[2026-06-18 15:11:16] [32minfo[39m: GET /api/call?page=1&limit=1&result=onCall
+[2026-06-18 15:11:17] [32minfo[39m: PostgreSQL connected
+[2026-06-18 15:11:17] [32minfo[39m: PostgreSQL connected
+[2026-06-18 15:13:08] [32minfo[39m: PostgreSQL connected
+[2026-06-18 15:13:09] [32minfo[39m: Migrations applied successfully
+[2026-06-18 15:13:09] [32minfo[39m: Server running on port 8790
+[2026-06-18 15:13:16] [32minfo[39m: GET /api/call?page=1&limit=1&result=onCall
+[2026-06-18 15:13:17] [32minfo[39m: PostgreSQL connected
+[2026-06-18 15:14:16] [32minfo[39m: GET /api/call?page=1&limit=1&result=onCall
+[2026-06-18 15:14:17] [32minfo[39m: PostgreSQL connected
+[2026-06-18 15:14:17] [32minfo[39m: PostgreSQL connected
+[2026-06-18 15:15:16] [32minfo[39m: GET /api/call?page=1&limit=1&result=onCall
+[2026-06-18 15:15:17] [32minfo[39m: PostgreSQL connected
+[2026-06-18 15:15:17] [32minfo[39m: PostgreSQL connected
+[2026-06-18 15:16:05] [32minfo[39m: PostgreSQL connected
+[2026-06-18 15:16:07] [32minfo[39m: Migrations applied successfully
+[2026-06-18 15:16:07] [32minfo[39m: Server running on port 8790
+[2026-06-18 15:16:11] [32minfo[39m: PostgreSQL connected
+[2026-06-18 15:16:13] [32minfo[39m: Migrations applied successfully
+[2026-06-18 15:16:13] [32minfo[39m: Server running on port 8790
+[2026-06-18 15:16:16] [32minfo[39m: GET /api/call?page=1&limit=1&result=onCall
+[2026-06-18 15:16:17] [32minfo[39m: PostgreSQL connected
