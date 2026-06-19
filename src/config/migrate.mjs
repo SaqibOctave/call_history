@@ -113,6 +113,21 @@ export async function runMigrations() {
         ON "Users" (organization_name);
     `);
 
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS "RefreshTokens" (
+        id         BIGSERIAL    PRIMARY KEY,
+        user_id    BIGINT       NOT NULL REFERENCES "Users"(user_id) ON DELETE CASCADE,
+        token      TEXT         NOT NULL UNIQUE,
+        expires_at TIMESTAMPTZ  NOT NULL,
+        created_at TIMESTAMPTZ  NOT NULL DEFAULT now()
+      );
+    `);
+
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_refresh_tokens_user
+        ON "RefreshTokens" (user_id);
+    `);
+
     await client.query('COMMIT');
     logger.info('Migrations applied successfully');
   } catch (err) {
