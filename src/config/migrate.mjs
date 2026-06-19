@@ -77,6 +77,42 @@ export async function runMigrations() {
         ON "Call_History" (started_at DESC);
     `);
 
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS "Users" (
+        user_id           BIGSERIAL    PRIMARY KEY,
+        profile_pic       TEXT,
+        first_name        TEXT         NOT NULL,
+        last_name         TEXT         NOT NULL,
+        username          TEXT         NOT NULL UNIQUE,
+        email             TEXT         NOT NULL UNIQUE,
+        password          TEXT         NOT NULL,
+        role              TEXT         NOT NULL DEFAULT 'VIEWER',
+        organization_name TEXT,
+        created_at        TIMESTAMPTZ  NOT NULL DEFAULT now(),
+        updated_at        TIMESTAMPTZ  NOT NULL DEFAULT now()
+      );
+    `);
+
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_users_email
+        ON "Users" (email);
+    `);
+
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_users_username
+        ON "Users" (username);
+    `);
+
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_users_role
+        ON "Users" (role);
+    `);
+
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_users_organization
+        ON "Users" (organization_name);
+    `);
+
     await client.query('COMMIT');
     logger.info('Migrations applied successfully');
   } catch (err) {
