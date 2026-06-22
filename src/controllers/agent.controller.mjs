@@ -1,6 +1,6 @@
 
 import * as service from '../services/agent.service.mjs';
-import { sendSuccess, sendCreated, sendError } from '../utils/response.mjs';
+import { sendSuccess, sendError } from '../utils/response.mjs';
 import logger from '../config/logger.mjs';
 
 
