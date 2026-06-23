@@ -111,3 +111,27 @@ export async function deleteCall(idParam) {
   if (!deleted) throw createError('Call not found', HTTP_STATUS.NOT_FOUND);
   return deleted;
 }
+
+export async function bulkCreateCalls(records) {
+  if (!Array.isArray(records) || records.length === 0) {
+    throw createError('Body must be a non-empty array of call records', HTTP_STATUS.BAD_REQUEST);
+  }
+
+  for (let i = 0; i < records.length; i++) {
+    const { session_id, agent_id, started_at, status } = records[i];
+    if (!session_id || typeof session_id !== 'string') {
+      throw createError(`records[${i}]: session_id is required`, HTTP_STATUS.BAD_REQUEST);
+    }
+    if (!agent_id || typeof agent_id !== 'string') {
+      throw createError(`records[${i}]: agent_id is required`, HTTP_STATUS.BAD_REQUEST);
+    }
+    if (!started_at) {
+      throw createError(`records[${i}]: started_at is required`, HTTP_STATUS.BAD_REQUEST);
+    }
+    if (status && !VALID_STATUSES.includes(status)) {
+      throw createError(`records[${i}]: status must be one of: ${VALID_STATUSES.join(', ')}`, HTTP_STATUS.BAD_REQUEST);
+    }
+  }
+
+  return repo.insertCallsBulk(records);
+}

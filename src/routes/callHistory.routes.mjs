@@ -4,6 +4,7 @@ import * as controller from '../controllers/callHistory.controller.mjs';
 const router = Router();
 
 router.post('/',       controller.createCall);
+router.post('/bulk',   controller.bulkCreateCalls);
 router.get('/',        controller.getAllCalls);
 router.get('/:id',     controller.getCallById);
 router.delete('/:id',  controller.deleteCall);

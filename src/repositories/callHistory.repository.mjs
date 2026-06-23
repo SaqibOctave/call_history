@@ -87,3 +87,30 @@ export async function deleteCallById(call_id) {
   );
   return rows[0] ?? null;
 }
+
+export async function insertCallsBulk(records) {
+  const fields = [
+    'session_id', 'agent_id', 'agent_name', 'started_at', 'ended_at',
+    'duration_seconds', 'status', 'last_node', 'turns',
+    'prompt_tokens', 'completion_tokens', 'total_tokens',
+    'tts_characters', 'avg_llm_ttfb_ms', 'avg_tts_ttfb_ms', 'error',
+  ];
+
+  const values = [];
+  const placeholderRows = records.map((r, i) => {
+    const base = i * fields.length;
+    values.push(
+      r.session_id, r.agent_id, r.agent_name ?? null, r.started_at, r.ended_at ?? null,
+      r.duration_seconds ?? null, r.status ?? 'unknown', r.last_node ?? null, r.turns ?? 0,
+      r.prompt_tokens ?? 0, r.completion_tokens ?? 0, r.total_tokens ?? 0,
+      r.tts_characters ?? 0, r.avg_llm_ttfb_ms ?? null, r.avg_tts_ttfb_ms ?? null, r.error ?? null,
+    );
+    return `(${fields.map((_, j) => `$${base + j + 1}`).join(', ')})`;
+  });
+
+  const { rows } = await pool.query(
+    `INSERT INTO "Call_History" (${fields.join(', ')}) VALUES ${placeholderRows.join(', ')} RETURNING *`,
+    values
+  );
+  return rows;
+}

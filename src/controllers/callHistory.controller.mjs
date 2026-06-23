@@ -41,3 +41,13 @@ export async function deleteCall(req, res) {
     sendError(res, err);
   }
 }
+
+export async function bulkCreateCalls(req, res) {
+  try {
+    const calls = await service.bulkCreateCalls(req.body);
+    sendCreated(res, { inserted: calls.length, data: calls });
+  } catch (err) {
+    logger.error(`bulkCreateCalls: ${err.message}`);
+    sendError(res, err);
+  }
+}
