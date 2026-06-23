@@ -86,12 +86,12 @@ export async function updateUser(idParam, data) {
   if (email !== undefined) {
     if (!EMAIL_REGEX.test(email)) throw createError('Invalid email format', HTTP_STATUS.BAD_REQUEST);
     const existing = await repo.findUserByEmail(email);
-    if (existing && existing.user_id !== id) throw createError('Email already in use', HTTP_STATUS.BAD_REQUEST);
+    if (existing && existing.user_id != id) throw createError('Email already in use', HTTP_STATUS.BAD_REQUEST);
   }
 
   if (username !== undefined) {
     const existing = await repo.findUserByUsername(username);
-    if (existing && existing.user_id !== id) throw createError('Username already in use', HTTP_STATUS.BAD_REQUEST);
+    if (existing && existing.user_id != id) throw createError('Username already in use', HTTP_STATUS.BAD_REQUEST);
   }
 
   if (password !== undefined) {
