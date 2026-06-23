@@ -6,6 +6,7 @@ import authRoutes from './routes/auth.routes.mjs';
 import callHistoryRoutes from './routes/callHistory.routes.mjs';
 import userRoutes from './routes/user.routes.mjs';
 import agentRoutes from './routes/agent.routes.mjs';
+import reportsRoutes from './routes/reports.routes.mjs';
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.get('/health', (_req, res) => {
 app.use('/api/auth',  authRoutes);
 app.use('/api/call',  callHistoryRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/agents', agentRoutes);
+app.use('/api/agents',  agentRoutes);
+app.use('/api/reports', reportsRoutes);
 
 export default app;
