@@ -1,16 +1,18 @@
 import pool from '../config/db.mjs';
 
+const REPORT_TIMEZONE = process.env.REPORT_TIMEZONE || 'UTC';
+
 export async function totalCallsInWindow(from, to) {
   const { rows } = await pool.query(
     `SELECT
-       DATE(started_at AT TIME ZONE 'UTC') AS date,
-       COUNT(*)::int                       AS count
+       DATE(started_at AT TIME ZONE $3) AS date,
+       COUNT(*)::int                    AS count
      FROM "Call_History"
      WHERE started_at >= $1
        AND started_at <= $2
-     GROUP BY DATE(started_at AT TIME ZONE 'UTC')
+     GROUP BY DATE(started_at AT TIME ZONE $3)
      ORDER BY date ASC`,
-    [from, to]
+    [from, to, REPORT_TIMEZONE]
   );
   return rows;
 }

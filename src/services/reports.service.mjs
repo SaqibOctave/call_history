@@ -15,7 +15,10 @@ function rollingWeekWindow() {
 }
 
 function toDateString(date) {
-  return date.toISOString().slice(0, 10);
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
 }
 
 function buildDaySlots(from, to) {
@@ -147,11 +150,14 @@ export async function weeklyCallsByDay() {
     rows.map(r => [toDateString(new Date(r.date)), r.count])
   );
 
+  const todayStr = toDateString(new Date());
+
   return buildDaySlots(from, to).reverse().map(date => {
     const d = new Date(date + 'T00:00:00Z');
     return {
       date,
       day:   DAY_NAMES[d.getUTCDay()],
+      today: date === todayStr,
       count: countByDate[date] ?? 0,
     };
   });
