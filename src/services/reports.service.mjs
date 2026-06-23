@@ -136,6 +136,8 @@ export async function weeklyInterruptionRate() {
   };
 }
 
+const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
 export async function weeklyCallsByDay() {
   const { from, to } = rollingWeekWindow();
 
@@ -145,10 +147,14 @@ export async function weeklyCallsByDay() {
     rows.map(r => [toDateString(new Date(r.date)), r.count])
   );
 
-  return buildDaySlots(from, to).map(date => ({
-    date,
-    count: countByDate[date] ?? 0,
-  }));
+  return buildDaySlots(from, to).reverse().map(date => {
+    const d = new Date(date + 'T00:00:00Z');
+    return {
+      date,
+      day:   DAY_NAMES[d.getUTCDay()],
+      count: countByDate[date] ?? 0,
+    };
+  });
 }
 
 export async function weeklyTotalCalls() {
@@ -156,16 +162,7 @@ export async function weeklyTotalCalls() {
 
   const rows = await repo.totalCallsInWindow(from, to);
 
-  const countByDate = Object.fromEntries(
-    rows.map(r => [toDateString(new Date(r.date)), r.count])
-  );
-
-  const days = buildDaySlots(from, to).map(date => ({
-    date,
-    count: countByDate[date] ?? 0,
-  }));
-
-  const total = days.reduce((sum, d) => sum + d.count, 0);
+  const total = rows.reduce((sum, r) => sum + r.count, 0);
 
   return {
     window: {
@@ -173,6 +170,5 @@ export async function weeklyTotalCalls() {
       to:   toDateString(to),
     },
     total,
-    by_day: days,
   };
 }
