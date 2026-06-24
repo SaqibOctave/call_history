@@ -2,6 +2,46 @@ import * as service from '../services/reports.service.mjs';
 import { sendSuccess, sendError } from '../utils/response.mjs';
 import logger from '../config/logger.mjs';
 
+export async function getDashboardAgentStatus(req, res) {
+  try {
+    const result = await service.dashboardAgentStatus();
+    sendSuccess(res, result);
+  } catch (err) {
+    logger.error(`getDashboardAgentStatus: ${err.message}`);
+    sendError(res, err);
+  }
+}
+
+export async function getDashboardInterruptionRate(req, res) {
+  try {
+    const result = await service.dashboardInterruptionRate();
+    sendSuccess(res, result);
+  } catch (err) {
+    logger.error(`getDashboardInterruptionRate: ${err.message}`);
+    sendError(res, err);
+  }
+}
+
+export async function getDashboardCallsToday(req, res) {
+  try {
+    const result = await service.dashboardCallsToday();
+    sendSuccess(res, result);
+  } catch (err) {
+    logger.error(`getDashboardCallsToday: ${err.message}`);
+    sendError(res, err);
+  }
+}
+
+export async function getDashboardAvgLlmLatency(req, res) {
+  try {
+    const result = await service.dashboardAvgLlmLatency();
+    sendSuccess(res, result);
+  } catch (err) {
+    logger.error(`getDashboardAvgLlmLatency: ${err.message}`);
+    sendError(res, err);
+  }
+}
+
 export async function getWeeklyConversationQuality(req, res) {
   try {
     const result = await service.weeklyConversationQuality();

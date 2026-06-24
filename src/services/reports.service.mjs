@@ -1,6 +1,32 @@
 import CallResult from '../config/call_result.enum.mjs';
 import * as repo from '../repositories/reports.repository.mjs';
 
+function todayWindow() {
+  const now = new Date();
+
+  const from = new Date(now);
+  from.setHours(0, 0, 0, 0);
+
+  const to = new Date(now);
+  to.setHours(23, 59, 59, 999);
+
+  return { from, to, dateStr: toDateString(from) };
+}
+
+function yesterdayWindow() {
+  const now = new Date();
+
+  const from = new Date(now);
+  from.setDate(from.getDate() - 1);
+  from.setHours(0, 0, 0, 0);
+
+  const to = new Date(now);
+  to.setDate(to.getDate() - 1);
+  to.setHours(23, 59, 59, 999);
+
+  return { from, to };
+}
+
 function rollingWeekWindow() {
   const now = new Date();
 
@@ -31,6 +57,66 @@ function buildDaySlots(from, to) {
     cursor.setDate(cursor.getDate() + 1);
   }
   return slots;
+}
+
+export async function dashboardAgentStatus() {
+  const row = await repo.agentStatus();
+  return {
+    active_agents:  row.active_agents,
+    on_call_agents: row.on_call_agents,
+  };
+}
+
+export async function dashboardInterruptionRate() {
+  const { from, to, dateStr } = todayWindow();
+  const row = await repo.callStatsInWindow(from, to);
+
+  const total  = row.total_calls;
+  const failed = row.failed_calls;
+  const rate   = total === 0 ? 0 : parseFloat(((failed / total) * 100).toFixed(2));
+
+  return {
+    date:              dateStr,
+    total_calls:       total,
+    failed_calls:      failed,
+    interruption_rate: rate,
+  };
+}
+
+export async function dashboardCallsToday() {
+  const { from: todayFrom, to: todayTo, dateStr } = todayWindow();
+  const { from: yFrom, to: yTo }                  = yesterdayWindow();
+
+  const [todayRow, yesterdayRow] = await Promise.all([
+    repo.callStatsInWindow(todayFrom, todayTo),
+    repo.callStatsInWindow(yFrom, yTo),
+  ]);
+
+  const todayCount     = todayRow.total_calls;
+  const yesterdayCount = yesterdayRow.total_calls;
+
+  const change_pct = yesterdayCount === 0
+    ? null
+    : parseFloat((((todayCount - yesterdayCount) / yesterdayCount) * 100).toFixed(2));
+
+  return {
+    date:            dateStr,
+    calls_today:     todayCount,
+    calls_yesterday: yesterdayCount,
+    change_pct,
+    trend:           change_pct === null ? 'no_data' : change_pct >= 0 ? 'up' : 'down',
+  };
+}
+
+export async function dashboardAvgLlmLatency() {
+  const { from, to, dateStr } = todayWindow();
+  const row = await repo.callStatsInWindow(from, to);
+
+  return {
+    date:            dateStr,
+    total_calls:     row.total_calls,
+    avg_llm_ttfb_ms: parseFloat(row.avg_llm_ttfb_ms.toFixed(2)),
+  };
 }
 
 export async function weeklyConversationQuality() {

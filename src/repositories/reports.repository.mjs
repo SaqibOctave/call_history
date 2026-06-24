@@ -94,6 +94,30 @@ export async function conversationQualityInWindow(from, to) {
   return rows[0];
 }
 
+export async function agentStatus() {
+  const { rows } = await pool.query(
+    `SELECT
+       COUNT(DISTINCT agent_id)::int                                        AS active_agents,
+       COUNT(DISTINCT CASE WHEN status = 'onCall' THEN agent_id END)::int  AS on_call_agents
+     FROM "Call_History"`
+  );
+  return rows[0];
+}
+
+export async function callStatsInWindow(from, to) {
+  const { rows } = await pool.query(
+    `SELECT
+       COUNT(*)::int                                          AS total_calls,
+       COUNT(*) FILTER (WHERE status = 'failed')::int       AS failed_calls,
+       COALESCE(AVG(avg_llm_ttfb_ms), 0)::float            AS avg_llm_ttfb_ms
+     FROM "Call_History"
+     WHERE started_at >= $1
+       AND started_at <= $2`,
+    [from, to]
+  );
+  return rows[0];
+}
+
 export async function callCountsByStatusInWindow(from, to) {
   const { rows } = await pool.query(
     `SELECT
