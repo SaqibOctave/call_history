@@ -123,6 +123,48 @@ export async function callStatsInWindow(from, to, kind) {
   return rows[0];
 }
 
+export async function pipelineAgentLiveStatus(from, to, limit) {
+  const { rows } = await pool.query(
+    `SELECT
+       a.name,
+       a.status,
+       a.port,
+       COUNT(ch.call_id)::int                       AS calls_today,
+       COALESCE(AVG(ch.avg_tts_ttfb_ms), 0)::float AS avg_ttfb_ms
+     FROM agents a
+     LEFT JOIN "Call_History" ch
+       ON ch.agent_id = a.id
+      AND ch.started_at >= $1
+      AND ch.started_at <= $2
+     GROUP BY a.id, a.name, a.status, a.port
+     ORDER BY calls_today DESC
+     LIMIT $3`,
+    [from, to, limit]
+  );
+  return rows;
+}
+
+export async function s2sAgentLiveStatus(from, to, limit) {
+  const { rows } = await pool.query(
+    `SELECT
+       a.name,
+       a.status,
+       a.port,
+       COUNT(s.id)::int                             AS calls_today,
+       COALESCE(AVG(s.avg_llm_ttfb_ms), 0)::float AS avg_ttfb_ms
+     FROM sts_agents a
+     LEFT JOIN sts_agent_stats s
+       ON s.agent_id = a.id
+      AND s.started_at >= $1
+      AND s.started_at <= $2
+     GROUP BY a.id, a.name, a.status, a.port
+     ORDER BY calls_today DESC
+     LIMIT $3`,
+    [from, to, limit]
+  );
+  return rows;
+}
+
 export async function callCountsByStatusInWindow(from, to) {
   const { rows } = await pool.query(
     `SELECT

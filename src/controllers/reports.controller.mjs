@@ -112,6 +112,16 @@ export async function getWeeklyCallsByDay(req, res) {
   }
 }
 
+export async function getAgentLiveStatus(req, res) {
+  try {
+    const result = await service.agentLiveStatus();
+    sendSuccess(res, result);
+  } catch (err) {
+    logger.error(`getAgentLiveStatus: ${err.message}`);
+    sendError(res, err);
+  }
+}
+
 export async function getWeeklyTotalCalls(req, res) {
   try {
     const result = await service.weeklyTotalCalls();

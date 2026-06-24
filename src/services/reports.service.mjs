@@ -264,6 +264,33 @@ export async function weeklyCallsByDay() {
   });
 }
 
+export async function agentLiveStatus() {
+  const { from, to } = todayWindow();
+
+  const [pipeline, s2s] = await Promise.all([
+    repo.pipelineAgentLiveStatus(from, to, 2),
+    repo.s2sAgentLiveStatus(from, to, 2),
+  ]);
+
+  let agents;
+  if (pipeline.length === 0 && s2s.length === 0) {
+    agents = [];
+  } else if (pipeline.length === 0) {
+    const extra = await repo.s2sAgentLiveStatus(from, to, 4);
+    agents = extra.map(r => ({ ...r, kind: 's2s' }));
+  } else if (s2s.length === 0) {
+    const extra = await repo.pipelineAgentLiveStatus(from, to, 4);
+    agents = extra.map(r => ({ ...r, kind: 'pipeline' }));
+  } else {
+    agents = [
+      ...pipeline.map(r => ({ ...r, kind: 'pipeline' })),
+      ...s2s.map(r => ({ ...r, kind: 's2s' })),
+    ];
+  }
+
+  return { agents };
+}
+
 export async function weeklyTotalCalls() {
   const { from, to } = rollingWeekWindow();
 
