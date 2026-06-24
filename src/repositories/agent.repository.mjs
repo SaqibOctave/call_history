@@ -25,7 +25,9 @@ const agentProjection = (table, kind) => `
   FROM ${table} a
 `;
 
-export async function findAllAgents({ limit, offset, status, name }) {
+const KIND_TABLE = { pipeline: 'agents', s2s: 'sts_agents' };
+
+export async function findAllAgents({ limit, offset, status, name, kind }) {
   const conditions = [];
   const values = [];
   let idx = 1;
@@ -42,24 +44,24 @@ export async function findAllAgents({ limit, offset, status, name }) {
 
   const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
 
-  // Both tables share the same schema; union them, then order/paginate over the
-  // combined set so the list interleaves pipeline and s2s agents by recency.
-  const union = `
-    ${agentProjection('agents', 'pipeline')} ${where}
-    UNION ALL
-    ${agentProjection('sts_agents', 's2s')} ${where}
-  `;
+  // When `kind` is specified, query only the relevant table; otherwise union both.
+  const tables = kind
+    ? [[KIND_TABLE[kind], kind]]
+    : [['agents', 'pipeline'], ['sts_agents', 's2s']];
+
+  const projections = tables
+    .map(([table, k]) => `${agentProjection(table, k)} ${where}`)
+    .join('\n    UNION ALL\n    ');
+
+  const countExprs = tables
+    .map(([table]) => `(SELECT COUNT(*) FROM ${table} a ${where})`)
+    .join(' + ');
 
   const [countRes, dataRes] = await Promise.all([
-    pool.query(
-      `SELECT
-         (SELECT COUNT(*) FROM agents a ${where})
-         + (SELECT COUNT(*) FROM sts_agents a ${where}) AS count`,
-      values
-    ),
+    pool.query(`SELECT ${countExprs} AS count`, values),
     pool.query(
       `
-      SELECT agent FROM (${union}) AS combined
+      SELECT agent FROM (${projections}) AS combined
       ORDER BY created_at DESC
       LIMIT $${idx++}
       OFFSET $${idx++}

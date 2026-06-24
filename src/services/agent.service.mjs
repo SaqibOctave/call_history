@@ -3,6 +3,7 @@ import * as repo from '../repositories/agent.repository.mjs';
 import { HTTP_STATUS, createError } from '../utils/response.mjs';
 
 const VALID_STATUSES = ['running', 'inactive'];
+const VALID_KINDS    = ['pipeline', 's2s'];
 
 function parseAgentId(idParam) {
   const id = parseInt(idParam, 10);
@@ -27,8 +28,13 @@ export async function getAllAgents(query) {
 
   const name = query.name ?? null;
 
+  const kind = query.kind ?? null;
+  if (kind !== null && !VALID_KINDS.includes(kind)) {
+    throw createError(`kind must be one of: ${VALID_KINDS.join(', ')}`, HTTP_STATUS.BAD_REQUEST);
+  }
+
   const offset = (page - 1) * limit;
-  const { data, total } = await repo.findAllAgents({ limit, offset, status, name });
+  const { data, total } = await repo.findAllAgents({ limit, offset, status, name, kind });
 
   return {
     data,
