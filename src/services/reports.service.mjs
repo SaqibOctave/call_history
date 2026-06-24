@@ -59,23 +59,34 @@ function buildDaySlots(from, to) {
   return slots;
 }
 
-export async function dashboardAgentStatus() {
-  const row = await repo.agentStatus();
+function resolveKind(kind) {
+  if (kind !== 'pipeline' && kind !== 's2s') {
+    throw new Error(`Invalid kind "${kind}". Must be "pipeline" or "s2s".`);
+  }
+  return kind;
+}
+
+export async function dashboardAgentStatus(kind) {
+  resolveKind(kind);
+  const row = await repo.agentStatus(kind);
   return {
+    kind,
     active_agents:  row.active_agents,
     on_call_agents: row.on_call_agents,
   };
 }
 
-export async function dashboardInterruptionRate() {
+export async function dashboardInterruptionRate(kind) {
+  resolveKind(kind);
   const { from, to, dateStr } = todayWindow();
-  const row = await repo.callStatsInWindow(from, to);
+  const row = await repo.callStatsInWindow(from, to, kind);
 
   const total  = row.total_calls;
   const failed = row.failed_calls;
   const rate   = total === 0 ? 0 : parseFloat(((failed / total) * 100).toFixed(2));
 
   return {
+    kind,
     date:              dateStr,
     total_calls:       total,
     failed_calls:      failed,
@@ -83,13 +94,14 @@ export async function dashboardInterruptionRate() {
   };
 }
 
-export async function dashboardCallsToday() {
+export async function dashboardCallsToday(kind) {
+  resolveKind(kind);
   const { from: todayFrom, to: todayTo, dateStr } = todayWindow();
   const { from: yFrom, to: yTo }                  = yesterdayWindow();
 
   const [todayRow, yesterdayRow] = await Promise.all([
-    repo.callStatsInWindow(todayFrom, todayTo),
-    repo.callStatsInWindow(yFrom, yTo),
+    repo.callStatsInWindow(todayFrom, todayTo, kind),
+    repo.callStatsInWindow(yFrom, yTo, kind),
   ]);
 
   const todayCount     = todayRow.total_calls;
@@ -100,6 +112,7 @@ export async function dashboardCallsToday() {
     : parseFloat((((todayCount - yesterdayCount) / yesterdayCount) * 100).toFixed(2));
 
   return {
+    kind,
     date:            dateStr,
     calls_today:     todayCount,
     calls_yesterday: yesterdayCount,
@@ -108,11 +121,13 @@ export async function dashboardCallsToday() {
   };
 }
 
-export async function dashboardAvgLlmLatency() {
+export async function dashboardAvgLlmLatency(kind) {
+  resolveKind(kind);
   const { from, to, dateStr } = todayWindow();
-  const row = await repo.callStatsInWindow(from, to);
+  const row = await repo.callStatsInWindow(from, to, kind);
 
   return {
+    kind,
     date:            dateStr,
     total_calls:     row.total_calls,
     avg_llm_ttfb_ms: parseFloat(row.avg_llm_ttfb_ms.toFixed(2)),

@@ -4,7 +4,7 @@ import logger from '../config/logger.mjs';
 
 export async function getDashboardAgentStatus(req, res) {
   try {
-    const result = await service.dashboardAgentStatus();
+    const result = await service.dashboardAgentStatus(req.params.kind);
     sendSuccess(res, result);
   } catch (err) {
     logger.error(`getDashboardAgentStatus: ${err.message}`);
@@ -14,7 +14,7 @@ export async function getDashboardAgentStatus(req, res) {
 
 export async function getDashboardInterruptionRate(req, res) {
   try {
-    const result = await service.dashboardInterruptionRate();
+    const result = await service.dashboardInterruptionRate(req.params.kind);
     sendSuccess(res, result);
   } catch (err) {
     logger.error(`getDashboardInterruptionRate: ${err.message}`);
@@ -24,7 +24,7 @@ export async function getDashboardInterruptionRate(req, res) {
 
 export async function getDashboardCallsToday(req, res) {
   try {
-    const result = await service.dashboardCallsToday();
+    const result = await service.dashboardCallsToday(req.params.kind);
     sendSuccess(res, result);
   } catch (err) {
     logger.error(`getDashboardCallsToday: ${err.message}`);
@@ -34,7 +34,7 @@ export async function getDashboardCallsToday(req, res) {
 
 export async function getDashboardAvgLlmLatency(req, res) {
   try {
-    const result = await service.dashboardAvgLlmLatency();
+    const result = await service.dashboardAvgLlmLatency(req.params.kind);
     sendSuccess(res, result);
   } catch (err) {
     logger.error(`getDashboardAvgLlmLatency: ${err.message}`);

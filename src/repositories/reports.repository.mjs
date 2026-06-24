@@ -94,17 +94,21 @@ export async function conversationQualityInWindow(from, to) {
   return rows[0];
 }
 
-export async function agentStatus() {
+export async function agentStatus(kind) {
+  const table = kind === 's2s' ? 'sts_agents' : 'agents';
   const { rows } = await pool.query(
     `SELECT
-       COUNT(DISTINCT agent_id)::int                                        AS active_agents,
-       COUNT(DISTINCT CASE WHEN status = 'onCall' THEN agent_id END)::int  AS on_call_agents
-     FROM "Call_History"`
+       (SELECT COUNT(*)::int FROM ${table})   AS active_agents,
+       COUNT(DISTINCT ch.agent_id)::int       AS on_call_agents
+     FROM "Call_History" ch
+     WHERE ch.status = 'onCall'
+       AND ch.agent_id IN (SELECT id FROM ${table})`
   );
   return rows[0];
 }
 
-export async function callStatsInWindow(from, to) {
+export async function callStatsInWindow(from, to, kind) {
+  const table = kind === 's2s' ? 'sts_agents' : 'agents';
   const { rows } = await pool.query(
     `SELECT
        COUNT(*)::int                                          AS total_calls,
@@ -112,7 +116,8 @@ export async function callStatsInWindow(from, to) {
        COALESCE(AVG(avg_llm_ttfb_ms), 0)::float            AS avg_llm_ttfb_ms
      FROM "Call_History"
      WHERE started_at >= $1
-       AND started_at <= $2`,
+       AND started_at <= $2
+       AND agent_id IN (SELECT id FROM ${table})`,
     [from, to]
   );
   return rows[0];
