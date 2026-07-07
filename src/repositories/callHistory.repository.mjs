@@ -1,35 +1,7 @@
 import pool from '../config/db.mjs';
 
-export async function insertCall(data) {
-  const {
-    session_id, agent_id, agent_name, started_at, ended_at,
-    duration_seconds, status, last_node, turns,
-    prompt_tokens, completion_tokens, total_tokens,
-    tts_characters, avg_llm_ttfb_ms, avg_tts_ttfb_ms, error,
-  } = data;
-
-  const { rows } = await pool.query(
-    `INSERT INTO "Call_History" (
-        session_id, agent_id, agent_name, started_at, ended_at,
-        duration_seconds, status, last_node, turns,
-        prompt_tokens, completion_tokens, total_tokens,
-        tts_characters, avg_llm_ttfb_ms, avg_tts_ttfb_ms, error
-      ) VALUES (
-        $1, $2, $3, $4, $5,
-        $6, $7, $8, $9,
-        $10, $11, $12,
-        $13, $14, $15, $16
-      ) RETURNING *`,
-    [
-      session_id, agent_id, agent_name ?? null, started_at, ended_at ?? null,
-      duration_seconds ?? null, status ?? 'unknown', last_node ?? null, turns ?? 0,
-      prompt_tokens ?? 0, completion_tokens ?? 0, total_tokens ?? 0,
-      tts_characters ?? 0, avg_llm_ttfb_ms ?? null, avg_tts_ttfb_ms ?? null, error ?? null,
-    ]
-  );
-  return rows[0];
-}
-
+// Read-only: "Call_History" is a view over pipecat-flows' agent_stats /
+// sts_agent_stats tables (pipecat is the sole writer). See migrate.mjs.
 export async function findAllCalls({ limit, offset, agent_id, agent_name, status, from_time, to_time }) {
   const conditions = [];
   const values = [];
@@ -78,39 +50,4 @@ export async function findCallById(call_id) {
     [call_id]
   );
   return rows[0] ?? null;
-}
-
-export async function deleteCallById(call_id) {
-  const { rows } = await pool.query(
-    `DELETE FROM "Call_History" WHERE call_id = $1 RETURNING *`,
-    [call_id]
-  );
-  return rows[0] ?? null;
-}
-
-export async function insertCallsBulk(records) {
-  const fields = [
-    'session_id', 'agent_id', 'agent_name', 'started_at', 'ended_at',
-    'duration_seconds', 'status', 'last_node', 'turns',
-    'prompt_tokens', 'completion_tokens', 'total_tokens',
-    'tts_characters', 'avg_llm_ttfb_ms', 'avg_tts_ttfb_ms', 'error',
-  ];
-
-  const values = [];
-  const placeholderRows = records.map((r, i) => {
-    const base = i * fields.length;
-    values.push(
-      r.session_id, r.agent_id, r.agent_name ?? null, r.started_at, r.ended_at ?? null,
-      r.duration_seconds ?? null, r.status ?? 'unknown', r.last_node ?? null, r.turns ?? 0,
-      r.prompt_tokens ?? 0, r.completion_tokens ?? 0, r.total_tokens ?? 0,
-      r.tts_characters ?? 0, r.avg_llm_ttfb_ms ?? null, r.avg_tts_ttfb_ms ?? null, r.error ?? null,
-    );
-    return `(${fields.map((_, j) => `$${base + j + 1}`).join(', ')})`;
-  });
-
-  const { rows } = await pool.query(
-    `INSERT INTO "Call_History" (${fields.join(', ')}) VALUES ${placeholderRows.join(', ')} RETURNING *`,
-    values
-  );
-  return rows;
 }

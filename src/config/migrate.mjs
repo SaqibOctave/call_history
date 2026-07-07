@@ -14,68 +14,48 @@ export async function runMigrations() {
       END $$;
     `);
 
-    // Drop old table if it has the old schema (missing session_id column)
-    await client.query(`
-      DO $$ BEGIN
-        IF EXISTS (
-          SELECT 1 FROM information_schema.tables
-          WHERE table_name = 'Call_History'
-        ) AND NOT EXISTS (
-          SELECT 1 FROM information_schema.columns
-          WHERE table_name = 'Call_History' AND column_name = 'session_id'
-        ) THEN
-          DROP TABLE "Call_History";
-        END IF;
-      END $$;
+    // ── Call history is a VIEW, not a table ────────────────────────────────
+    // pipecat-flows is the single writer of call stats: it writes pipeline
+    // calls to `agent_stats` and speech-to-speech calls to `sts_agent_stats`
+    // (same DB). This service historically read a standalone "Call_History"
+    // table that nothing populated, so the UI was always empty. We now expose
+    // "Call_History" as a UNION view over both real tables, tagged with a
+    // `kind` discriminator and aliasing `id` → `call_id` so every existing
+    // query/report keeps working unchanged. S2S has no TTS stage, so its
+    // tts_characters/avg_tts_ttfb_ms are surfaced as 0/NULL.
+    //
+    // The base tables are owned by pipecat-flows; only build the view once
+    // both exist, so this service can start before pipecat has migrated.
+    await client.query(`DROP TABLE IF EXISTS "Call_History" CASCADE;`);
+
+    const { rows: baseTables } = await client.query(`
+      SELECT COUNT(*)::int AS n FROM information_schema.tables
+      WHERE table_name IN ('agent_stats', 'sts_agent_stats');
     `);
 
-    await client.query(`
-      CREATE TABLE IF NOT EXISTS "Call_History" (
-        call_id           BIGSERIAL        PRIMARY KEY,
-        session_id        TEXT             NOT NULL,
-        agent_id          TEXT             NOT NULL,
-        agent_name        TEXT,
-        started_at        TIMESTAMPTZ      NOT NULL,
-        ended_at          TIMESTAMPTZ,
-        duration_seconds  DOUBLE PRECISION,
-        status            TEXT             NOT NULL DEFAULT 'unknown',
-        last_node         TEXT,
-        turns             INTEGER          DEFAULT 0,
-        prompt_tokens     BIGINT           DEFAULT 0,
-        completion_tokens BIGINT           DEFAULT 0,
-        total_tokens      BIGINT           DEFAULT 0,
-        tts_characters    BIGINT           DEFAULT 0,
-        avg_llm_ttfb_ms   DOUBLE PRECISION,
-        avg_tts_ttfb_ms   DOUBLE PRECISION,
-        error             TEXT,
-        created_at        TIMESTAMPTZ      NOT NULL DEFAULT now()
+    if (baseTables[0].n === 2) {
+      await client.query(`
+        CREATE OR REPLACE VIEW "Call_History" AS
+          SELECT id AS call_id, session_id, agent_id, agent_name, started_at, ended_at,
+                 duration_seconds, status, last_node, turns, prompt_tokens, completion_tokens,
+                 total_tokens, tts_characters, avg_llm_ttfb_ms, avg_tts_ttfb_ms, error, created_at,
+                 'pipeline' AS kind
+          FROM agent_stats
+          UNION ALL
+          SELECT id AS call_id, session_id, agent_id, agent_name, started_at, ended_at,
+                 duration_seconds, status, last_node, turns, prompt_tokens, completion_tokens,
+                 total_tokens, 0::bigint AS tts_characters, avg_llm_ttfb_ms,
+                 NULL::double precision AS avg_tts_ttfb_ms, error, created_at,
+                 's2s' AS kind
+          FROM sts_agent_stats;
+      `);
+      logger.info('Call_History view created over agent_stats + sts_agent_stats');
+    } else {
+      logger.warn(
+        'Skipping Call_History view: agent_stats/sts_agent_stats not found yet ' +
+        '(pipecat-flows must run first). Restart this service after they exist.'
       );
-    `);
-
-    await client.query(`
-      CREATE INDEX IF NOT EXISTS idx_call_history_session
-        ON "Call_History" (session_id);
-    `);
-
-    await client.query(`
-      CREATE INDEX IF NOT EXISTS idx_call_history_agent_id
-        ON "Call_History" (agent_id);
-    `);
-
-    await client.query(`
-      CREATE INDEX IF NOT EXISTS idx_call_history_agent_name
-        ON "Call_History" (agent_name);
-    `);
-
-    await client.query(`
-      CREATE INDEX IF NOT EXISTS idx_call_history_status
-        ON "Call_History" (status);
-    `);
-
-    await client.query(`
-      CREATE INDEX IF NOT EXISTS idx_call_history_started_at
-        ON "Call_History" (started_at DESC);
-    `);
+    }
 
     await client.query(`
       CREATE TABLE IF NOT EXISTS "Users" (
