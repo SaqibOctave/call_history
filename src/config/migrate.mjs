@@ -26,7 +26,6 @@ export async function runMigrations() {
     //
     // The base tables are owned by pipecat-flows; only build the view once
     // both exist, so this service can start before pipecat has migrated.
-    await client.query(`DROP TABLE IF EXISTS "Call_History" CASCADE;`);
 
     const { rows: baseTables } = await client.query(`
       SELECT COUNT(*)::int AS n FROM information_schema.tables
