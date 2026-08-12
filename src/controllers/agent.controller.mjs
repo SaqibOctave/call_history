@@ -29,6 +29,15 @@ export async function getAgentById(req, res) {
 // persistence wired up yet) — cheap to keep once it's not needed anymore.
 export async function createAgent(req, res) {
   console.log('POST /api/agents payload:', JSON.stringify(req.body, null, 2));
+  if (req.file) {
+    // req.file.buffer is deliberately omitted here — it's the raw file content and
+    // not useful to print, just its size/type.
+    console.log('POST /api/agents file:', {
+      originalname: req.file.originalname,
+      mimetype: req.file.mimetype,
+      size: req.file.size,
+    });
+  }
 
   const { name, config, knowledgeBase } = req.body;
 
@@ -38,8 +47,13 @@ export async function createAgent(req, res) {
   }
 
   try {
-    const result = await knowledgeBaseService.createAgentKnowledgeBase({ name, config, knowledgeBase });
-    sendCreated(res, { message: 'Knowledge base scraped, embedded, and stored', data: result });
+    const result = await knowledgeBaseService.createAgentKnowledgeBase({
+      name,
+      config,
+      knowledgeBase,
+      file: req.file, // only set for knowledgeBase.type === 'file'
+    });
+    sendCreated(res, { message: 'Knowledge base ingested and stored', data: result });
   } catch (err) {
     logger.error(`createAgent (knowledge base ingestion): ${err.message}`);
     sendError(res, err);

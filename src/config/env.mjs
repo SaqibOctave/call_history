@@ -39,4 +39,16 @@ export default {
     summaryWordLimit: Number(process.env.FLOW_SUMMARY_WORD_LIMIT ?? 300),
     maxContentChars: Number(process.env.FLOW_MAX_CONTENT_CHARS ?? 60000),
   },
+
+  knowledgeBase: {
+    // Mimetypes accepted for knowledgeBase.type === 'file' uploads (POST /api/agents).
+    // Each type here must have a matching extraction branch in
+    // src/services/knowledgeBase/fileExtractor.mjs — this only controls which of the
+    // *implemented* types are currently allowed, not add new ones.
+    allowedFileTypes: (process.env.KB_ALLOWED_FILE_TYPES || 'application/pdf,text/csv')
+      .split(',')
+      .map((type) => type.trim())
+      .filter(Boolean),
+    maxFileSizeBytes: Number(process.env.KB_MAX_FILE_SIZE_BYTES ?? 25 * 1024 * 1024),
+  },
 };
