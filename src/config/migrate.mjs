@@ -116,4 +116,80 @@ export async function runMigrations() {
   } finally {
     client.release();
   }
+
+  // Run separately from the block above, in its own transaction: pgvector is an
+  // optional extension, and if it isn't installed on this Postgres instance we want
+  // that to just disable knowledge-base ingestion, not block the whole app from
+  // starting (unlike the migrations above, which the rest of the app depends on).
+  await runVectorMigrations();
+}
+
+async function runVectorMigrations() {
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+
+    // Adds the VECTOR column type + similarity operators used below. Requires the
+    // pgvector extension to be installed on the Postgres server itself (not just
+    // "available to create") — CREATE EXTENSION fails otherwise.
+    await client.query(`CREATE EXTENSION IF NOT EXISTS vector;`);
+
+    // One row per "create agent" request that included a knowledgeBase — holds the
+    // agent name/config from the payload plus the ingestion job's status. This is
+    // NOT the pipecat-owned "agents"/"sts_agents" table; it only tracks the
+    // knowledge-base scrape → embed pipeline for now.
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS "AgentKnowledgeBases" (
+        id          BIGSERIAL    PRIMARY KEY,
+        name        TEXT         NOT NULL,
+        config      JSONB        NOT NULL DEFAULT '{}',
+        source_type TEXT         NOT NULL,
+        source_url  TEXT,
+        status      TEXT         NOT NULL DEFAULT 'pending',
+        error       TEXT,
+        created_at  TIMESTAMPTZ  NOT NULL DEFAULT now(),
+        updated_at  TIMESTAMPTZ  NOT NULL DEFAULT now()
+      );
+    `);
+
+    // One row per chunk of scraped text, each with its own embedding vector.
+    // VECTOR(1536) must match the output size of whichever embedding model
+    // generates the vectors (text-embedding-3-small = 1536 dims — see
+    // src/services/knowledgeBase/embedder.mjs). Changing the model later means
+    // changing this column width too.
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS "AgentKnowledgeChunks" (
+        id                BIGSERIAL    PRIMARY KEY,
+        knowledge_base_id BIGINT       NOT NULL REFERENCES "AgentKnowledgeBases"(id) ON DELETE CASCADE,
+        chunk_index       INT          NOT NULL,
+        content           TEXT         NOT NULL,
+        embedding         VECTOR(1536) NOT NULL,
+        created_at        TIMESTAMPTZ  NOT NULL DEFAULT now(),
+        UNIQUE (knowledge_base_id, chunk_index)
+      );
+    `);
+
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_agent_kb_chunks_kb
+        ON "AgentKnowledgeChunks" (knowledge_base_id);
+    `);
+
+    // IVFFlat index for approximate-nearest-neighbor cosine search (the standard
+    // similarity metric for OpenAI embeddings). It's fine to create this before any
+    // data exists — it just won't be well-clustered until there's enough data to
+    // REINDEX against; harmless either way on a table this size.
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_agent_kb_chunks_embedding
+        ON "AgentKnowledgeChunks" USING ivfflat (embedding vector_cosine_ops)
+        WITH (lists = 100);
+    `);
+
+    await client.query('COMMIT');
+    logger.info('pgvector migrations applied (AgentKnowledgeBases, AgentKnowledgeChunks)');
+  } catch (err) {
+    await client.query('ROLLBACK');
+    logger.warn(`Skipping pgvector migrations: ${err.message}`);
+  } finally {
+    client.release();
+  }
 }

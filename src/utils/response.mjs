@@ -19,7 +19,11 @@ export function sendCreated(res, data) {
 }
 
 export function sendError(res, err) {
-  const status = err.status ?? HTTP_STATUS.INTERNAL_SERVER_ERROR;
+  // Two error shapes exist in this codebase: createError() below sets `.status`,
+  // while AppError (src/utils/AppError.mjs, used by the scraping/knowledge-base
+  // modules) sets `.statusCode`. Check both so either kind maps to its real HTTP
+  // status instead of silently falling back to 500.
+  const status = err.status ?? err.statusCode ?? HTTP_STATUS.INTERNAL_SERVER_ERROR;
   return res.status(status).json({ error: err.message });
 }
 
