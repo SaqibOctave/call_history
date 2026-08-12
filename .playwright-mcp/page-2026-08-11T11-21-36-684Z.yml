@@ -1,0 +1,152 @@
+- generic [ref=e1]:
+  - dialog "Manage Consent" [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e4]: Manage Consent
+      - button "Close dialog" [active] [ref=e5] [cursor=pointer]:
+        - img [ref=e6]: 
+    - generic [ref=e8]: To provide the best experiences, we use technologies like cookies to store and/or access device information. Consenting to these technologies will allow us to process data such as browsing behavior or unique IDs on this site. Not consenting or withdrawing consent, may adversely affect certain features and functions.
+    - generic [ref=e10]:
+      - button "Accept" [ref=e11] [cursor=pointer]
+      - button "Deny" [ref=e12] [cursor=pointer]
+      - button "View preferences" [ref=e13] [cursor=pointer]
+    - list [ref=e15]:
+      - listitem [ref=e16]:
+        - link "Cookie Policy" [ref=e17] [cursor=pointer]:
+          - /url: https://octavebytes.com/cookie-policy-eu/
+      - listitem [ref=e18]:
+        - link "Privacy Policy" [ref=e19] [cursor=pointer]:
+          - /url: https://octavebytes.com/privacy-policy/
+      - listitem
+  - link "Skip to main content" [ref=e20] [cursor=pointer]:
+    - /url: "#content"
+  - generic [ref=e21]:
+    - banner [ref=e22]:
+      - generic [ref=e23]:
+        - generic [ref=e24]:
+          - list [ref=e28]:
+            - listitem [ref=e29]:
+              - link "AWS Partner Network" [ref=e30] [cursor=pointer]:
+                - /url: https://partners.amazonaws.com/partners/0010h00001d3uT5AAI/Octave%20Bytes
+          - generic [ref=e36]:
+            - list [ref=e39]:
+              - listitem [ref=e40]:
+                - link "sales@octavebytes.com" [ref=e41] [cursor=pointer]:
+                  - /url: mailto:sales@octavebytes.com
+                  - generic [ref=e42]: 
+            - list [ref=e47]:
+              - listitem [ref=e48]:
+                - generic [ref=e49]: 
+                - generic [ref=e51]: +1 855 681 46 27
+            - list [ref=e54]:
+              - listitem [ref=e55]:
+                - generic [ref=e56]: 
+                - generic [ref=e58]: +92 326-0376366
+            - list [ref=e61]:
+              - listitem [ref=e62]:
+                - link "Facebook" [ref=e63] [cursor=pointer]:
+                  - /url: https://www.facebook.com/octavebytes?ref=pages_you_manage
+                  - generic [ref=e65]: 
+              - listitem [ref=e66]:
+                - link "Twitter" [ref=e67] [cursor=pointer]:
+                  - /url: https://twitter.com/octavebytes
+                  - generic [ref=e69]: 
+              - listitem [ref=e70]:
+                - link "Linkedin" [ref=e71] [cursor=pointer]:
+                  - /url: https://www.linkedin.com/company/octavebytes/
+                  - generic [ref=e73]: 
+              - listitem [ref=e74]:
+                - link "Youtube" [ref=e75] [cursor=pointer]:
+                  - /url: https://www.youtube.com/channel/UCA0Le6ELahBzAf-I7jOBuRQ
+                  - generic [ref=e77]: 
+        - generic [ref=e78]:
+          - link [ref=e82] [cursor=pointer]:
+            - /url: https://octavebytes.com
+          - navigation [ref=e87]:
+            - list [ref=e88]:
+              - listitem [ref=e89]:
+                - button [ref=e90]:
+                  - link "Company " [ref=e91] [cursor=pointer]:
+                    - /url: https://octavebytes.com
+                    - text: Company
+                    - generic [ref=e92]: 
+              - listitem [ref=e94]:
+                - button [ref=e95]:
+                  - link "Products " [ref=e96] [cursor=pointer]:
+                    - /url: "#"
+                    - text: Products
+                    - generic [ref=e97]: 
+              - listitem [ref=e99]:
+                - button [ref=e100]:
+                  - link "Services " [ref=e101] [cursor=pointer]:
+                    - /url: "#"
+                    - text: Services
+                    - generic [ref=e102]: 
+              - listitem [ref=e104]:
+                - link "AWS Marketplace" [ref=e105] [cursor=pointer]:
+                  - /url: https://aws.amazon.com/marketplace/seller-profile?id=9b681de3-4b74-43f4-831e-098b67d94074
+              - listitem [ref=e106]:
+                - link "Blogs" [ref=e107] [cursor=pointer]:
+                  - /url: https://octavebytes.com/blog/
+              - listitem [ref=e108]:
+                - link "Case Studies" [ref=e109] [cursor=pointer]:
+                  - /url: https://octavebytes.com/case-studies/
+              - listitem [ref=e110]:
+                - link "Contact Us" [ref=e111] [cursor=pointer]:
+                  - /url: https://octavebytes.com/contact-us/
+          - search [ref=e115] [cursor=pointer]:
+            - generic [ref=e116]:
+              - searchbox "Search" [ref=e117]
+              - generic [ref=e118]: 
+          - link "Request a Demo" [ref=e124] [cursor=pointer]:
+            - /url: "#popmake-12102"
+        - text:         
+    - main [ref=e127]:
+      - generic [ref=e129]:
+        - generic [ref=e132]:
+          - heading "About our company" [level=2] [ref=e135]
+          - paragraph [ref=e138]:
+            - text: Octavebytes is innovating the customer experience. As an AWS
+            - strong [ref=e139]: Amazon Connect Service Delivery Partner & Amazon Connect Ready Partner,
+            - strong [ref=e140]: Select Tier Services partner.
+            - text: We specialise in the design, delivery & migration of businesses to
+            - link "Amazon Connect" [ref=e141] [cursor=pointer]:
+              - /url: https://octavebytes.com/amazon-connect/
+            - text: ", a next-generation cloud call centre. Our expertise is focused on CTI connectors, enterprise-level integration,"
+            - link "customer experience" [ref=e142] [cursor=pointer]:
+              - /url: https://octavebytes.com/about/
+            - text: ", customised reporting, AI Chatbots, voicebots and Omnichannel. Customer Experience is the core of our product development and solution design strategy. We believe customer interactions should be Easy, Effective, Consistent and Insightful across all channels."
+        - generic [ref=e153]:
+          - list [ref=e154]:
+            - listitem [ref=e155]:
+              - link "WHO WE ARE" [ref=e156] [cursor=pointer]:
+                - /url: "#uc_content_tabs_elementor_306b6ef_item1"
+            - listitem [ref=e158]:
+              - link "WHAT WE DO" [ref=e159] [cursor=pointer]:
+                - /url: "#uc_content_tabs_elementor_306b6ef_item2"
+            - listitem [ref=e161]:
+              - link "How We Do It" [ref=e162] [cursor=pointer]:
+                - /url: "#uc_content_tabs_elementor_306b6ef_item3"
+          - generic [ref=e164]:
+            - text: + 
+            - generic [ref=e167]:
+              - generic [ref=e173]:
+                - paragraph [ref=e174]:
+                  - strong [ref=e175]: "Our Passion: Elevating the Customer Experience"
+                - paragraph [ref=e176]: At Octavebytes, our core passion lies in enhancing the customer experience. We believe that exceptional customer interactions are the foundation of successful businesses. With our expertise and dedication, we’re here to help you deliver a customer experience that stands out from the rest.
+                - paragraph [ref=e177]:
+                  - strong [ref=e178]: "Specialization: Crafting Next-Generation Contact Centers"
+                - paragraph [ref=e179]: We specialize in the design and delivery of cutting-edge contact center solutions. Whether it’s Amazon Connect, Amazon Lex, Cisco Cloud, or a custom in-house cloud-based system, we have the knowledge and skills to tailor a solution to your unique needs.
+              - generic [ref=e193]:
+                - paragraph [ref=e194]:
+                  - strong [ref=e195]: "Our Mission: Empowering Businesses Through Cloud Technology"
+                - paragraph [ref=e196]: Our primary focus is to assist businesses in improving customer engagement while harnessing the full potential of cloud technology. By leveraging our expertise, you can maximize the benefits of the cloud, enhancing your ability to connect with customers and elevate your operations.
+                - paragraph [ref=e197]:
+                  - strong [ref=e198]: We look forward to collaborating with you to create a customer experience that leaves a lasting impression and drives your business to new heights.
+            - text: +  + 
+          - text: + 
+    - contentinfo [ref=e199]
+  - generic [ref=e233]: desktop
+  - iframe [ref=e236]:
+    - generic [ref=f2e6]:
+      - text: protected by
+      - strong [ref=f2e7]: reCAPTCHA
