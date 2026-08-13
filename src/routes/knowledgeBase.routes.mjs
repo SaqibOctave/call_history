@@ -25,8 +25,9 @@ function normalizeKnowledgeBasePayload(req, res, next) {
   next();
 }
 
-router.get('/',    controller.listKnowledgeBases);
-router.get('/:id', controller.getKnowledgeBaseById);
+router.get('/',       controller.listKnowledgeBases);
+router.get('/:id',    controller.getKnowledgeBaseById);
+router.delete('/:id', controller.deleteKnowledgeBase);
 router.post(
   '/',
   uploadKnowledgeBaseFile,
