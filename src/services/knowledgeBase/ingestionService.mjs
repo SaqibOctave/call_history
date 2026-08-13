@@ -28,17 +28,18 @@ async function extractSourceText({ knowledgeBase, file }) {
   return extractFileText(file);
 }
 
-// End-to-end pipeline for turning a "create agent" payload's knowledgeBase into
-// searchable pgvector rows:
+// End-to-end pipeline for turning a knowledgeBase (from POST /api/knowledge-bases,
+// or the knowledgeBase on POST /api/agents) into searchable pgvector rows:
 //
 //   1. extract  — scrape a URL, or extract text from an uploaded PDF/CSV
-//   2. chunk    — split the text into paragraph-sized pieces
-//   3. embed    — turn each chunk into a vector via OpenAI embeddings
-//   4. persist  — store {name, config} once, and each {chunk text, vector} row
+//   2. chunk    — split the text into paragraph-sized pieces (chunker.mjs)
+//   3. embed    — turn each chunk into a vector via OpenAI embeddings (embedder.mjs)
+//   4. persist  — store the knowledge base row once, and each {chunk text, vector} row
 //
-// The agent's name/config are stored alongside the chunks (in AgentKnowledgeBases)
-// purely as context for this ingestion job — this does NOT write to the
-// pipecat-owned "agents"/"sts_agents" tables.
+// `config` is optional and only meaningful when called from POST /api/agents (that
+// endpoint's provider settings) — POST /api/knowledge-bases doesn't pass one, and it
+// just defaults to '{}'. Either way this does NOT write to the pipecat-owned
+// "agents"/"sts_agents" tables.
 export async function createAgentKnowledgeBase({ name, config, knowledgeBase, file }) {
   if (!knowledgeBase || !SUPPORTED_SOURCE_TYPES.includes(knowledgeBase.type)) {
     throw new AppError(
@@ -46,6 +47,11 @@ export async function createAgentKnowledgeBase({ name, config, knowledgeBase, fi
       400
     );
   }
+
+  // sizeBytes is only known upfront for uploaded files (multer already has it from
+  // the HTTP request); a scraped URL's byte size isn't meaningful in the same way,
+  // so it's left null and simply omitted from the response below.
+  const sizeBytes = knowledgeBase.type === 'file' ? file?.size : undefined;
 
   // source_url column doubles as "where did this come from": the page URL for
   // type 'url', or the original filename for type 'file' — see the comment on
@@ -55,6 +61,7 @@ export async function createAgentKnowledgeBase({ name, config, knowledgeBase, fi
     config: config || {},
     sourceType: knowledgeBase.type,
     sourceUrl: knowledgeBase.type === 'url' ? knowledgeBase.url : knowledgeBase.fileName,
+    sizeBytes,
   });
 
   try {
@@ -79,17 +86,28 @@ export async function createAgentKnowledgeBase({ name, config, knowledgeBase, fi
 
     await repo.updateStatus(record.id, 'ready');
 
-    return {
-      id: record.id,
-      name: record.name,
-      status: 'ready',
-      sourceType: knowledgeBase.type,
-      source: record.source_url,
-      chunkCount: chunks.length,
-    };
+    return buildKnowledgeBaseResponse({ ...record, status: 'ready' }, chunks.length);
   } catch (err) {
     logger.error(`Knowledge base ingestion failed (id=${record.id}): ${err.message}`);
     await repo.updateStatus(record.id, 'failed', err.message);
     throw err;
   }
+}
+
+// Shapes a DB row (or the in-memory stub returned while pgvector is disabled) into
+// the API's public knowledge-base shape. sizeBytes is only included when present
+// (file-sourced KBs), matching how a URL-sourced KB has no such field at all rather
+// than an explicit null.
+export function buildKnowledgeBaseResponse(record, chunkCount) {
+  const response = {
+    id: record.id,
+    name: record.name,
+    type: record.source_type,
+    source: record.source_url,
+    status: record.status,
+    chunks: chunkCount,
+    createdAt: record.created_at,
+  };
+  if (record.size_bytes != null) response.sizeBytes = record.size_bytes;
+  return response;
 }

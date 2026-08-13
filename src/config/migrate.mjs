@@ -134,17 +134,25 @@ async function runVectorMigrations() {
     // "available to create") — CREATE EXTENSION fails otherwise.
     await client.query(`CREATE EXTENSION IF NOT EXISTS vector;`);
 
-    // One row per "create agent" request that included a knowledgeBase — holds the
-    // agent name/config from the payload plus the ingestion job's status. This is
-    // NOT the pipecat-owned "agents"/"sts_agents" table; it only tracks the
-    // knowledge-base scrape → embed pipeline for now.
+    // gen_random_uuid() below needs this on Postgres <13 (it's built into core from
+    // 13 onward, but CREATE EXTENSION IF NOT EXISTS is a harmless no-op either way).
+    await client.query(`CREATE EXTENSION IF NOT EXISTS pgcrypto;`);
+
+    // One row per knowledge base (POST /api/knowledge-bases, or the knowledgeBase
+    // on POST /api/agents) — name + where it came from + the ingestion job's status.
+    // This is NOT the pipecat-owned "agents"/"sts_agents" table; it only tracks the
+    // knowledge-base scrape/extract → embed pipeline. `config` is only ever
+    // populated when created via POST /api/agents (that endpoint's provider
+    // settings); knowledge bases created directly via POST /api/knowledge-bases
+    // leave it at the default '{}' since it doesn't apply to them.
     await client.query(`
       CREATE TABLE IF NOT EXISTS "AgentKnowledgeBases" (
-        id          BIGSERIAL    PRIMARY KEY,
+        id          UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
         name        TEXT         NOT NULL,
         config      JSONB        NOT NULL DEFAULT '{}',
         source_type TEXT         NOT NULL,
         source_url  TEXT,
+        size_bytes  BIGINT,
         status      TEXT         NOT NULL DEFAULT 'pending',
         error       TEXT,
         created_at  TIMESTAMPTZ  NOT NULL DEFAULT now(),
@@ -152,15 +160,15 @@ async function runVectorMigrations() {
       );
     `);
 
-    // One row per chunk of scraped text, each with its own embedding vector.
-    // VECTOR(1536) must match the output size of whichever embedding model
+    // One row per chunk of scraped/extracted text, each with its own embedding
+    // vector. VECTOR(1536) must match the output size of whichever embedding model
     // generates the vectors (text-embedding-3-small = 1536 dims — see
     // src/services/knowledgeBase/embedder.mjs). Changing the model later means
     // changing this column width too.
     await client.query(`
       CREATE TABLE IF NOT EXISTS "AgentKnowledgeChunks" (
         id                BIGSERIAL    PRIMARY KEY,
-        knowledge_base_id BIGINT       NOT NULL REFERENCES "AgentKnowledgeBases"(id) ON DELETE CASCADE,
+        knowledge_base_id UUID         NOT NULL REFERENCES "AgentKnowledgeBases"(id) ON DELETE CASCADE,
         chunk_index       INT          NOT NULL,
         content           TEXT         NOT NULL,
         embedding         VECTOR(1536) NOT NULL,

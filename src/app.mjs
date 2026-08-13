@@ -8,6 +8,7 @@ import userRoutes from './routes/user.routes.mjs';
 import agentRoutes from './routes/agent.routes.mjs';
 import reportsRoutes from './routes/reports.routes.mjs';
 import scrapeRoutes from './routes/scrapeRoutes.mjs';
+import knowledgeBaseRoutes from './routes/knowledgeBase.routes.mjs';
 import errorHandler from './middlewares/errorHandler.mjs';
 
 const app = express();
@@ -34,6 +35,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/agents',  agentRoutes);
 app.use('/api/reports', reportsRoutes);
 app.use('/api/scrape',  scrapeRoutes);
+app.use('/api/knowledge-bases', knowledgeBaseRoutes);
 
 app.use(errorHandler);
 
